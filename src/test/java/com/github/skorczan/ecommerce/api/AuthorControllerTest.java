@@ -18,9 +18,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -30,9 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(SampleDataTestConfiguration.class)
-public class ProductControllerTest {
-
-    private static final Pageable ALL_PRODUCTS_PAGE = PageRequest.of(0, 9999);
+public class AuthorControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -54,55 +53,62 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void listingAllProducts() throws Exception {
-        mockMvc.perform(get("/products?page=0&size=20"))
+    public void listingAllAuthors() throws Exception {
+        mockMvc.perform(get("/authors?page=0&size=20"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()", is(2)));
     }
 
     @Test
-    public void gettingExistingProduct() throws Exception {
-        val product = fixture.buty();
+    public void gettingExistingAuthor() throws Exception {
+        val author = fixture.janKowalski();
 
-        mockMvc.perform(get("/products/" + product.getId()))
+        mockMvc.perform(get("/authors/" + author.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", is(8)))
-                .andExpect(jsonPath("$.id", is(product.getId().intValue())))
-                .andExpect(jsonPath("$.title", is(product.getTitle())))
-                .andExpect(jsonPath("$.description", is(product.getDescription())))
-                .andExpect(jsonPath("$.thumbnailUrl", is(product.getThumbnailUrl())))
-                .andExpect(jsonPath("$.price", is(product.getPrice())))
-                .andExpect(jsonPath("$.type", is(product.getType().name())))
-                .andExpect(jsonPath("$.category.id", is(product.getCategory().getId().intValue())))
-                .andExpect(jsonPath("$.author.id", is(product.getAuthor().getId().intValue())));
+                .andExpect(jsonPath("$.length()", is(3)))
+                .andExpect(jsonPath("$.id", is(author.getId().intValue())))
+                .andExpect(jsonPath("$.firstName", is(author.getFirstName())))
+                .andExpect(jsonPath("$.lastName", is(author.getLastName())));
     }
 
     @Test
-    public void gettingNotExistingProduct() throws Exception {
+    public void gettingNotExistingAuthor() throws Exception {
         mockMvc.perform(get("/products/" + 999_999))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    public void addingNewProduct() throws Exception {
-        CreateProductRequest request = CreateProductRequest.builder()
-                .title(fixture.szmata().getTitle())
-                .description(fixture.szmata().getDescription())
-                .thumbnailUrl(fixture.szmata().getThumbnailUrl())
-                .price(fixture.szmata().getPrice())
-                .type(fixture.szmata().getType().name())
-                .categoryId(fixture.szmata().getCategory().getId())
-                .authorId(fixture.szmata().getAuthor().getId())
-                .build();
-
+    public void addingNewAuthor() throws Exception {
+        AddAuthor request = new AddAuthor(fixture.janKowalski().getFirstName(), fixture.janKowalski().getLastName());
         String payload = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/products")
+        mockMvc.perform(post("/authors")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payload))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"));
+    }
+
+    @Test
+    public void deletingExistingAuthorWhenRelatedToSomeProducts() throws Exception {
+        mockMvc.perform(delete("/authors/" + fixture.janKowalski().getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void deletingExistingAuthorWhenRelatedToNoProducts() throws Exception {
+        mockMvc.perform(delete("/authors/" + fixture.karolinaNowak().getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void deletingNonExistingAuthor() throws Exception {
+        mockMvc.perform(delete("/authors/" + 999_999)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
     }
 }

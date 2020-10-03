@@ -1,14 +1,11 @@
-package com.github.skorczan.ecommerce.application;
-
+package com.github.skorczan.ecommerce.api;
 
 import lombok.Builder;
 import lombok.Value;
 
 @Value
 @Builder
-public class ProductDto {
-
-    private Long id;
+public class CreateProductRequest {
 
     private String title;
 
@@ -20,7 +17,7 @@ public class ProductDto {
 
     private String type;
 
-    private AuthorDto author;
+    private Long authorId;
 
-    private ProductCategoryDto category;
+    private Long categoryId;
 }

@@ -1,5 +1,7 @@
 package com.github.skorczan.ecommerce.application;
 
+import com.github.skorczan.ecommerce.api.CreateProductRequest;
+import com.github.skorczan.ecommerce.domain.Product;
 import com.github.skorczan.ecommerce.domain.ProductRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,6 +30,12 @@ public class ProductService {
         return repository.findById(id).map(converter::convert);
     }
 
+    public ProductDto add(CreateProductRequest createProductRequest) {
+        var product = converter.convert(createProductRequest);
+        product = repository.save(product);
+        return converter.convert(product);
+    }
+
     public ProductDto add(ProductDto productDto) {
         var product = converter.convert(productDto);
         product = repository.save(product);
@@ -39,5 +48,9 @@ public class ProductService {
 
     public void remove(long productId) {
         repository.deleteById(productId);
+    }
+
+    public Page<ProductDto> findByAuthor(long productCategoryId, @NonNull Pageable page) {
+        return repository.findByCategoryId(productCategoryId, page).map(converter::convert);
     }
 }
