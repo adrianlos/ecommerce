@@ -1,6 +1,5 @@
 package com.github.skorczan.ecommerce.api;
 
-import com.github.skorczan.ecommerce.application.ProductDto;
 import lombok.val;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -8,22 +7,21 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Component
-public final class ProductValidator implements Validator {
+public final class CreateProductRequestValidator implements Validator {
+
+    private static final Set<String> productTypes = Set.of("DOMESTIC", "FOOD", "CLOTHES", "SHOES");
 
     @Override
     public boolean supports(Class<?> aClass) {
-        return Objects.equals(aClass, ProductDto.class);
+        return Objects.equals(aClass, CreateProductRequest.class);
     }
 
     @Override
     public void validate(Object o, Errors errors) {
-        val product = (ProductDto) o;
-
-        if (product.getId() != null) {
-            errors.rejectValue("id", "PRESENT");
-        }
+        val product = (CreateProductRequest) o;
 
         if (StringUtils.isEmpty(product.getTitle())) {
             errors.rejectValue("title", "EMPTY");
@@ -46,6 +44,20 @@ public final class ProductValidator implements Validator {
 
         if (product.getPrice() == null) {
             errors.rejectValue("price", "ABSENT");
+        }
+
+        if (product.getAuthorId() == null) {
+            errors.rejectValue("authorId", "ABSENT");
+        }
+
+        if (product.getCategoryId() == null) {
+            errors.rejectValue("categoryId", "ABSENT");
+        }
+
+        if (product.getType() == null) {
+            errors.rejectValue("type", "ABSENT");
+        } else if(!productTypes.contains(product.getType())){
+            errors.rejectValue("type", "INVALID");
         }
     }
 }

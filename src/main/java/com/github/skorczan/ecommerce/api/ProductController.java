@@ -4,11 +4,8 @@ import com.github.skorczan.ecommerce.application.ProductDto;
 import com.github.skorczan.ecommerce.application.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.hateoas.server.mvc.ControllerLinkBuilder;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -30,7 +26,7 @@ public class ProductController {
 
     private final ProductService productService;
 
-    private final ProductValidator productValidator;
+    private final CreateProductRequestValidator createProductRequestValidator;
 
     @GetMapping(path = "")
     public List<ProductDto> listProducts(Pageable page) {
@@ -45,11 +41,11 @@ public class ProductController {
     }
 
     @PostMapping(path = "", consumes = "application/json")
-    public ResponseEntity<Errors> addProduct(@RequestBody ProductDto product, Errors errors) {
-        productValidator.validate(product, errors);
+    public ResponseEntity<Errors> addProduct(@RequestBody CreateProductRequest request, Errors errors) {
+        createProductRequestValidator.validate(request, errors);
 
         if(!errors.hasErrors()) {
-            product = productService.add(product);
+            val product = productService.add(request);
             val link = ControllerLinkBuilder.linkTo(methodOn(ProductController.class).getProduct(product.getId()));
 
             return ResponseEntity.created(link.toUri()).build();

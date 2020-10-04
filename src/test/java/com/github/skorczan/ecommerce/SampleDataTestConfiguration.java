@@ -1,0 +1,22 @@
+package com.github.skorczan.ecommerce;
+
+import com.github.skorczan.ecommerce.configuration.SampleDataFixture;
+import com.github.skorczan.ecommerce.domain.AuthorRepository;
+import com.github.skorczan.ecommerce.domain.ProductCategoryRepository;
+import com.github.skorczan.ecommerce.domain.ProductRepository;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+
+import javax.persistence.EntityManager;
+
+@TestConfiguration
+public class SampleDataTestConfiguration {
+
+    @Bean
+    public SampleDataFixture sampleDataFixture(AuthorRepository authorRepository,
+                                               ProductCategoryRepository productCategoryRepository,
+                                               ProductRepository productRepository,
+                                               EntityManager entityManager) {
+        return new SampleDataFixture(authorRepository, productCategoryRepository, productRepository, entityManager);
+    }
+}
