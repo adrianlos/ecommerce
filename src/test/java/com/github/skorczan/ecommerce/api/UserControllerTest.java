@@ -2,6 +2,7 @@ package com.github.skorczan.ecommerce.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.skorczan.ecommerce.SampleDataTestConfiguration;
+import com.github.skorczan.ecommerce.application.AddressDto;
 import com.github.skorczan.ecommerce.configuration.SampleDataFixture;
 import com.github.skorczan.ecommerce.domain.User;
 import lombok.val;
@@ -111,12 +112,11 @@ public class UserControllerTest {
                 .role(UserRegistrationRequest.Role.valueOf(user.getRole().name()))
                 .contactPreference(UserRegistrationRequest.ContactPreference.valueOf(user.getContactPreference().name()))
                 .avatarUrl(user.getAvatarUrl())
-                .address(UserRegistrationRequest.Address.builder()
-                        .country(user.getAddress().getCountry())
-                        .city(user.getAddress().getCity())
-                        .street(user.getAddress().getStreet())
-                        .zipCode(user.getAddress().getZipCode())
-                        .build())
+                .address(new AddressDto(
+                        user.getAddress().getCountry(),
+                        user.getAddress().getCity(),
+                        user.getAddress().getStreet(),
+                        user.getAddress().getZipCode()))
                 .build();
     }
 }

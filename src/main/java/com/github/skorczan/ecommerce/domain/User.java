@@ -1,12 +1,10 @@
 package com.github.skorczan.ecommerce.domain;
 
-import com.github.skorczan.ecommerce.application.UserDto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -46,23 +44,6 @@ public class User {
     public enum Role {
         ADMIN,
         CUSTOMER
-    }
-
-    @Embeddable
-    @Data
-    public static class Address {
-
-        @Column(name = "country", nullable = false)
-        private String country;
-
-        @Column(name = "city", nullable = false)
-        private String city;
-
-        @Column(name = "street", nullable = false)
-        private String street;
-
-        @Column(name = "zip_code", nullable = false)
-        private String zipCode;
     }
 
     public enum ContactPreference {

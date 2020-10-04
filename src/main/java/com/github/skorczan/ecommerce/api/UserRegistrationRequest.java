@@ -1,5 +1,6 @@
 package com.github.skorczan.ecommerce.api;
 
+import com.github.skorczan.ecommerce.application.AddressDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
@@ -15,7 +16,7 @@ public class UserRegistrationRequest {
 
     private Role role;
 
-    private Address address;
+    private AddressDto address;
 
     private String avatarUrl;
 
@@ -24,20 +25,6 @@ public class UserRegistrationRequest {
     public enum Role {
         ADMIN,
         CUSTOMER
-    }
-
-    @Value
-    @AllArgsConstructor
-    @Builder
-    public static class Address {
-
-        private String country;
-
-        private String city;
-
-        private String street;
-
-        private String zipCode;
     }
 
     public enum ContactPreference {

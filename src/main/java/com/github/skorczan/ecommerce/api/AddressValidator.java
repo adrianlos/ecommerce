@@ -1,5 +1,6 @@
 package com.github.skorczan.ecommerce.api;
 
+import com.github.skorczan.ecommerce.application.AddressDto;
 import lombok.val;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -13,12 +14,12 @@ public class AddressValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> aClass) {
-        return Objects.equals(aClass, UserRegistrationRequest.Address.class);
+        return Objects.equals(aClass, AddressDto.class);
     }
 
     @Override
     public void validate(Object o, Errors errors) {
-        val address = (UserRegistrationRequest.Address) o;
+        val address = (AddressDto) o;
 
         if (StringUtils.isEmpty(address.getCountry())) {
             errors.rejectValue("country", "EMPTY");

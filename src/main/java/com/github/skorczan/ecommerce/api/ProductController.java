@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -29,8 +30,14 @@ public class ProductController {
     private final CreateProductRequestValidator createProductRequestValidator;
 
     @GetMapping(path = "")
-    public List<ProductDto> listProducts(Pageable page) {
-        return productService.list(page).toList();
+    public List<ProductDto> listProducts(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            Pageable page) {
+        return productService.search(name, type, categoryId, minPrice, maxPrice, page).toList();
     }
 
     @GetMapping(path = "/{id}")

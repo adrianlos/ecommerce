@@ -14,7 +14,7 @@ public class UserDto {
 
     private Role role;
 
-    private Address address;
+    private AddressDto address;
 
     private String avatarUrl;
 
@@ -23,19 +23,6 @@ public class UserDto {
     public enum Role {
         ADMIN,
         CUSTOMER
-    }
-
-    @Value
-    @Builder
-    public static class Address {
-
-        private String country;
-
-        private String city;
-
-        private String street;
-
-        private String zipCode;
     }
 
     public enum ContactPreference {
@@ -56,12 +43,7 @@ public class UserDto {
         this.id = id;
         this.login = login;
         this.role = role;
-        this.address = Address.builder()
-                .country(country)
-                .city(city)
-                .street(street)
-                .zipCode(zipCode)
-                .build();
+        this.address = new AddressDto(country, city, street, zipCode);
         this.avatarUrl = avatarUrl;
         this.contactPreference = contactPreference;
     }
