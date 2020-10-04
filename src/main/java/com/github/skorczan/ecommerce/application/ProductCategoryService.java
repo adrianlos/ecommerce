@@ -31,12 +31,36 @@ public class ProductCategoryService {
         var entity = new ProductCategory();
         entity.setName(name);
 
-        Optional.ofNullable(parentCategoryId)
-                .flatMap(repository::findById)
-                .ifPresent(entity::setParentCategory);
+        if(parentCategoryId != null) {
+            repository.findById(parentCategoryId).ifPresent(entity::setParentCategory);
+        } else {
+            entity.setParentCategory(null);
+        }
 
         entity = repository.save(entity);
         return converter.convert(entity);
+    }
+
+    public Optional<ProductCategoryDto> rename(long categoryId, String name) {
+        return repository.findById(categoryId)
+                .map(category -> {
+                    category.setName(name);
+                    return category;
+                })
+                .map(converter::convert);
+    }
+
+    public Optional<ProductCategoryDto>  changeParentCategory(long categoryId, Long parentCategoryId) {
+        return repository.findById(categoryId)
+                .map(category -> {
+                    if(parentCategoryId != null) {
+                        repository.findById(parentCategoryId).ifPresent(category::setParentCategory);
+                    } else {
+                        category.setParentCategory(null);
+                    }
+                    return category;
+                })
+                .map(converter::convert);
     }
 
     public void removeOne(long categoryId) {

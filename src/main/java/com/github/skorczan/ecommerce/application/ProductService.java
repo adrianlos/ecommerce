@@ -51,6 +51,6 @@ public class ProductService {
     }
 
     public Page<ProductDto> findByAuthor(long productCategoryId, @NonNull Pageable page) {
-        return repository.findByCategoryId(productCategoryId, page).map(converter::convert);
+        return repository.findByAuthorId(productCategoryId, page).map(converter::convert);
     }
 }

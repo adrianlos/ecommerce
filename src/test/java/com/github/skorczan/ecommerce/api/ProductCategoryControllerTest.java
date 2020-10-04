@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -100,6 +101,21 @@ public class ProductCategoryControllerTest {
                 .content(payload))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"));
+    }
+
+    @Test
+    public void updatingExistingProductCategory() throws Exception {
+        CreateProductCategoryRequest request = new CreateProductCategoryRequest("Renamed", null);
+        String payload = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(put("/products/categories/" + fixture.childClothes().getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payload))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(3)))
+                .andExpect(jsonPath("$.id", is(fixture.childClothes().getId().intValue())))
+                .andExpect(jsonPath("$.name", is("Renamed")))
+                .andExpect(jsonPath("$.parentCategoryId", is(nullValue())));
     }
 
     @Test
