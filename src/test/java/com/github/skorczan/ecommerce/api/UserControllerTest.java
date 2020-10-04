@@ -3,6 +3,7 @@ package com.github.skorczan.ecommerce.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.skorczan.ecommerce.SampleDataTestConfiguration;
 import com.github.skorczan.ecommerce.configuration.SampleDataFixture;
+import com.github.skorczan.ecommerce.domain.User;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(SampleDataTestConfiguration.class)
-public class AuthorControllerTest {
+public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -53,62 +52,71 @@ public class AuthorControllerTest {
     }
 
     @Test
-    public void listingAllAuthors() throws Exception {
-        mockMvc.perform(get("/authors?page=0&size=20"))
+    public void listingAllUsers() throws Exception {
+        mockMvc.perform(get("/users?page=0&size=20"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()", is(2)));
     }
 
     @Test
-    public void gettingExistingAuthor() throws Exception {
-        val author = fixture.janKowalski();
+    public void gettingExistingUser() throws Exception {
+        val customer = fixture.customer();
 
-        mockMvc.perform(get("/authors/" + author.getId()))
+        mockMvc.perform(get("/users/" + customer.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", is(3)))
-                .andExpect(jsonPath("$.id", is(author.getId().intValue())))
-                .andExpect(jsonPath("$.firstName", is(author.getFirstName())))
-                .andExpect(jsonPath("$.lastName", is(author.getLastName())));
+                .andExpect(jsonPath("$.length()", is(6)))
+                .andExpect(jsonPath("$.id", is(customer.getId().intValue())))
+                .andExpect(jsonPath("$.login", is(customer.getLogin())))
+                .andExpect(jsonPath("$.role", is(customer.getRole().name())));
     }
 
     @Test
     public void gettingNotExistingAuthor() throws Exception {
-        mockMvc.perform(get("/authors/" + 999_999))
+        mockMvc.perform(get("/users/" + 999_999))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    public void addingNewAuthor() throws Exception {
-        AddAuthor request = new AddAuthor(fixture.janKowalski().getFirstName(), fixture.janKowalski().getLastName());
+    public void registeringACustomer() throws Exception {
+        UserRegistrationRequest request = registrationOf(fixture.customer());
         String payload = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/authors")
+        mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payload))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"));
     }
+//    TODO: Enable when unregistering users is supported
+//    @Test
+//    public void deletingExistingCustomer() throws Exception {
+//        mockMvc.perform(delete("/users/" + fixture.customer().getId())
+//                .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isNoContent());
+//    }
+//
+//    @Test
+//    public void deletingNonExistingCustomer() throws Exception {
+//        mockMvc.perform(delete("/users/" + 999_999)
+//                .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isNoContent());
+//    }
 
-    @Test
-    public void deletingExistingAuthorWhenRelatedToSomeProducts() throws Exception {
-        mockMvc.perform(delete("/authors/" + fixture.janKowalski().getId())
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void deletingExistingAuthorWhenRelatedToNoProducts() throws Exception {
-        mockMvc.perform(delete("/authors/" + fixture.karolinaNowak().getId())
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
-    public void deletingNonExistingAuthor() throws Exception {
-        mockMvc.perform(delete("/authors/" + 999_999)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+    private UserRegistrationRequest registrationOf(User user) {
+        return UserRegistrationRequest.builder()
+                .login("new" + user.getLogin())
+                .password("sia1aBabaM@k!")
+                .role(UserRegistrationRequest.Role.valueOf(user.getRole().name()))
+                .contactPreference(UserRegistrationRequest.ContactPreference.valueOf(user.getContactPreference().name()))
+                .avatarUrl(user.getAvatarUrl())
+                .address(UserRegistrationRequest.Address.builder()
+                        .country(user.getAddress().getCountry())
+                        .city(user.getAddress().getCity())
+                        .street(user.getAddress().getStreet())
+                        .zipCode(user.getAddress().getZipCode())
+                        .build())
+                .build();
     }
 }
