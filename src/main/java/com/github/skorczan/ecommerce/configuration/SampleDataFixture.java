@@ -101,7 +101,7 @@ public class SampleDataFixture {
 
         admin = userRepository.save(User.builder()
                 .login("admin@example.com")
-                .password(new byte[] {})
+                .password("$2a$10$.914oSZ08ODTT6AEJBiSkOkE92yYNoVHQ8.gO/vfYHBKm6QLw18ty")
                 .role(User.Role.ADMIN)
                 .contactPreference(User.ContactPreference.EMAIL)
                 .avatarUrl("http://google.com")
@@ -113,7 +113,7 @@ public class SampleDataFixture {
 
         customer = userRepository.save(User.builder()
                 .login("customer@example.com")
-                .password(new byte[] {})
+                .password("$2a$10$NGolOKBD8wps782P43H5GuSzhiWytmsHifhi5VC3GaZqiLScy0VCa")
                 .role(User.Role.CUSTOMER)
                 .contactPreference(User.ContactPreference.EMAIL)
                 .avatarUrl("http://google.com")

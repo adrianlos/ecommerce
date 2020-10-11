@@ -26,7 +26,7 @@ public class User {
     private String login;
 
     @Column(name = "password", nullable = false)
-    private byte[] password;
+    private String password;
 
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -58,7 +58,7 @@ public class User {
     @Builder
     private User(Long id,
                  @NonNull String login,
-                 @NonNull byte[] password,
+                 @NonNull String password,
                  @NonNull Role role,
                  @NonNull String avatarUrl,
                  @NonNull ContactPreference contactPreference,

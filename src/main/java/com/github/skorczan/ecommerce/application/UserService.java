@@ -4,36 +4,25 @@ import com.github.skorczan.ecommerce.api.UserRegistrationRequest;
 import com.github.skorczan.ecommerce.domain.User;
 import com.github.skorczan.ecommerce.domain.UserRepository;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository repository;
 
     private final UserDomainDtoConverter converter;
 
-    private final MessageDigest messageDigest;
-
-    public UserService(UserRepository repository, UserDomainDtoConverter converter) {
-        this.repository = repository;
-        this.converter = converter;
-
-        try {
-            this.messageDigest = MessageDigest.getInstance("SHA3-256");
-        } catch (NoSuchAlgorithmException ex) {
-            throw new IllegalStateException("algorithm must be defined", ex);
-        }
-    }
+    private final PasswordEncoder passwordEncoder;
 
     public Page<UserDto> list(@NonNull Pageable page) {
         return repository.findAll(page).map(converter::convert);
@@ -54,7 +43,7 @@ public class UserService {
 
         var user = User.builder()
                 .login(request.getLogin())
-                .password(hashPassword(request.getPassword()))
+                .password(passwordEncoder.encode(request.getPassword()))
                 .role(User.Role.valueOf(request.getRole().name()))
                 .contactPreference(User.ContactPreference.valueOf(request.getContactPreference().name()))
                 .avatarUrl(request.getAvatarUrl())
@@ -66,10 +55,5 @@ public class UserService {
 
         user = repository.save(user);
         return converter.convert(user);
-    }
-
-    // TODO: where is the salt?
-    private byte[] hashPassword(String password) {
-        return messageDigest.digest(password.getBytes(StandardCharsets.UTF_8));
     }
 }
