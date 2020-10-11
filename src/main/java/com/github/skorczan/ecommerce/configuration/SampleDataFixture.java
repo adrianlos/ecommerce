@@ -7,6 +7,8 @@ import com.github.skorczan.ecommerce.domain.ProductCategory;
 import com.github.skorczan.ecommerce.domain.ProductCategoryRepository;
 import com.github.skorczan.ecommerce.domain.ProductRepository;
 import com.github.skorczan.ecommerce.domain.ProductType;
+import com.github.skorczan.ecommerce.domain.User;
+import com.github.skorczan.ecommerce.domain.UserRepository;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,10 @@ public class SampleDataFixture {
     @Getter(AccessLevel.NONE)
     private final ProductRepository productRepository;
 
+    @Getter(AccessLevel.NONE)
+    private final UserRepository userRepository;
+
+    @Getter(AccessLevel.NONE)
     private final EntityManager entityManager;
 
     private Author janKowalski;
@@ -50,6 +56,8 @@ public class SampleDataFixture {
     private ProductCategory fizzyDrinks;
     private Product szmata;
     private Product buty;
+    private User admin;
+    private User customer;
 
     public boolean shouldBeSaved() {
         return authorRepository.count() == 0 &&
@@ -90,6 +98,30 @@ public class SampleDataFixture {
                 .category(clothes)
                 .type(ProductType.CLOTHES)
                 .build());
+
+        admin = userRepository.save(User.builder()
+                .login("admin@example.com")
+                .password(new byte[] {})
+                .role(User.Role.ADMIN)
+                .contactPreference(User.ContactPreference.EMAIL)
+                .avatarUrl("http://google.com")
+                .country("NOWHERE")
+                .city("NOWHERE")
+                .street("HOMELESS")
+                .zipCode("00-000")
+                .build());
+
+        customer = userRepository.save(User.builder()
+                .login("customer@example.com")
+                .password(new byte[] {})
+                .role(User.Role.CUSTOMER)
+                .contactPreference(User.ContactPreference.EMAIL)
+                .avatarUrl("http://google.com")
+                .country("NOWHERE")
+                .city("NOWHERE")
+                .street("HOMELESS")
+                .zipCode("00-000")
+                .build());
     }
 
     public void remove() {
@@ -97,6 +129,7 @@ public class SampleDataFixture {
         productRepository.deleteAll();
         productCategoryRepository.deleteAll();
         authorRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     private Author generateAuthor(String fullName) {

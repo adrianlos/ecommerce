@@ -111,7 +111,12 @@ public class ProductCategoryService {
         List<ProductCategoryDto> result = new LinkedList<>();
         Queue<ProductCategory> queue = new LinkedList<>();
 
-        queue.addAll(repository.findByParentCategoryId(rootProductCategoryId));
+        if (rootProductCategoryId == null) {
+            queue.addAll(repository.findByParentCategoryId(rootProductCategoryId));
+        } else {
+            // TODO: more suited exception here
+            queue.add(repository.findById(rootProductCategoryId).orElseThrow(IllegalArgumentException::new));
+        }
 
         while (!queue.isEmpty()) {
             val productCategory = queue.poll();
