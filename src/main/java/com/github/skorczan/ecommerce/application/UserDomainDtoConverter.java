@@ -32,7 +32,7 @@ public class UserDomainDtoConverter {
         return User.builder()
                 .id(user.getId())
                 .login(user.getLogin())
-                .password(entity.map(User::getPassword).orElse(new byte[] {}))
+                .password(entity.map(User::getPassword).orElse("{noop}"))
                 .role(User.Role.valueOf(user.getRole().name()))
                 .contactPreference(User.ContactPreference.valueOf(user.getContactPreference().name()))
                 .country(user.getAddress().getCountry())
