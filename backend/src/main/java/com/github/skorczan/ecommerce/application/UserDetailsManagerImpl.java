@@ -44,8 +44,8 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
                 .stream()
                 .map(grantedAuthority -> {
                     switch (grantedAuthority.getAuthority()) {
-                        case "ROLE_ADMIN": return User.Role.ADMIN;
-                        case "ROLE_CUSTOMER": return User.Role.CUSTOMER;
+                        case "ADMIN": return User.Role.ADMIN;
+                        case "CUSTOMER": return User.Role.CUSTOMER;
                         default:
                             throw new IllegalStateException("unknown user role: " + grantedAuthority.getAuthority());
                     }
@@ -84,9 +84,9 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
     private Collection<? extends GrantedAuthority> authoritiesFor(User user) {
         switch (user.getRole()) {
             case ADMIN:
-                return Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                return Collections.singleton(new SimpleGrantedAuthority("ADMIN"));
             case CUSTOMER:
-                return Collections.singleton(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
+                return Collections.singleton(new SimpleGrantedAuthority("CUSTOMER"));
             default:
                 throw new IllegalStateException("unknown role: " + user.getRole());
         }
