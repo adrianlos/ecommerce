@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 @Profile({"sample-data", "test"})
@@ -79,25 +80,13 @@ public class SampleDataFixture {
         stillDrinks = generateCategory("Napoje niegazowane", drinks);
         fizzyDrinks = generateCategory("Napoje gazowane", drinks);
 
-        szmata = productRepository.save(Product.builder()
-                .title("Szmata")
-                .description("Stara, podarta, ale lepsza niż nic")
-                .thumbnailUrl("http://google.com")
-                .price(1.00)
-                .author(janKowalski)
-                .category(clothes)
-                .type(ProductType.CLOTHES)
-                .build());
+        szmata = productRepository.save(szmataBuilder().build());
+        buty = productRepository.save(butyBuilder().build());
 
-        buty = productRepository.save(Product.builder()
-                .title("Buty")
-                .description("Lepsze to niż chodzić na bosaka")
-                .thumbnailUrl("http://google.com")
-                .price(1.00)
-                .author(janKowalski)
-                .category(clothes)
-                .type(ProductType.CLOTHES)
-                .build());
+        for(int i = 0; i < 20; ++i) {
+            productRepository.save(szmataBuilder().build());
+            productRepository.save(butyBuilder().build());
+        }
 
         admin = userRepository.save(User.builder()
                 .login("admin@example.com")
@@ -122,6 +111,28 @@ public class SampleDataFixture {
                 .street("HOMELESS")
                 .zipCode("00-000")
                 .build());
+    }
+
+    private Product.ProductBuilder szmataBuilder() {
+        return Product.builder()
+                .title("Szmata")
+                .description("Stara, podarta, ale lepsza niż nic")
+                .thumbnailUrl("https://0.allegroimg.com/original/015d9b/2918b4954b368e3c63f3e24d6140/SCIERKA-PODLOGOWA-SZMATA-DO-PODLOGI-CHLONNA-AGD")
+                .price(ThreadLocalRandom.current().nextDouble(1, 100))
+                .author(janKowalski)
+                .category(clothes)
+                .type(ProductType.CLOTHES);
+    }
+
+    private Product.ProductBuilder butyBuilder() {
+        return Product.builder()
+                .title("Buty")
+                .description("Lepsze to niż chodzić na bosaka")
+                .thumbnailUrl("https://i.imgur.com/3kfa7nQ.jpg")
+                .price(ThreadLocalRandom.current().nextDouble(1, 100))
+                .author(janKowalski)
+                .category(clothes)
+                .type(ProductType.CLOTHES);
     }
 
     public void remove() {

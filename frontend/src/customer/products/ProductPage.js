@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { getProduct } from './redux';
+import {Typography, Divider, CssBaseline, Paper} from "@material-ui/core";
+import Price from "./Price";
 
-class ProductPage extends Component{
+class ProductPage extends Component {
 
     componentDidMount() {
         this.props.getData(this.props.productId)
@@ -10,21 +12,18 @@ class ProductPage extends Component{
 
     render() {
         return (
-            <div>
-                <p>{this.props.title}</p>
-                <p>{this.props.description}</p>
-                <img src={this.props.thumbnailUrl}/>
-                <p>{this.props.category == null ? "" : this.props.categoryname}</p>
-                <p>{this.props.price}</p>
-                <p>{this.props.type}</p>
-                <p>{this.props.author == null ? "" : this.props.author.firstName + " " + this.props.author.lastName}</p>
-            </div>
+            <Paper style={{ padding: "1em" }}>
+                <Typography variant="h4" gutterBottom>{this.props.title}</Typography>
+                <Price value={this.props.price} />
+                <img src={this.props.thumbnailUrl} style={{ maxWidth: "100%", maxHeight: "100%" }}/>
+                <Typography variant="body1">{this.props.description}</Typography>
+            </Paper>
         );
     }
 }
 
 const mapStateToProps = (state, ownProps) => {
-    return state.product[ownProps.productId] || { productId: ownProps.productId }
+    return state.products.byId[ownProps.productId] || { productId: ownProps.productId }
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {

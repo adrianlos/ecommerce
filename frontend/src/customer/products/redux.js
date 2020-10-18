@@ -7,15 +7,28 @@ export const getProduct = createAsyncThunk("GET_PRODUCT", async productId => {
     return response.data
 });
 
+export const findProducts = createAsyncThunk("FIND_PRODUCT", async filters => {
+    let url = "http://localhost:8080/products?" + Object.entries(filters).map((name, value) => name + "=" + value).join("&");
+    let response = await api.get(url);
+    return response.data
+});
+
 export const productSlice = createSlice({
     name: 'products',
-    initialState: { },
+    initialState: { search: [], byId: {} },
     reducers: {
         // standard reducer logic, with auto-generated action types per reducer
     },
     extraReducers: {
         [getProduct.fulfilled]: (state, action) => {
-            state[action.payload.id] = action.payload
+            state.byId[action.payload.id] = action.payload
+        },
+        [findProducts.fulfilled]: (state, action) => {
+            for (const product of action.payload) {
+                state.byId[product.id] = product
+            }
+
+            state.search = action.payload
         }
     }
 })
