@@ -1,23 +1,15 @@
 import {Grid, Card, CardActionArea, CardContent, CardMedia, CardActions, Typography, Button, Link} from "@material-ui/core";
-import React, {Component} from "react";
+import React  from "react";
 import Price from "./Price";
-import {findProducts} from "./redux";
-import {connect} from "react-redux";
 import {Link as RouterLink} from "react-router-dom";
 
-class ProductsGrid extends Component {
 
-    componentDidMount() {
-        this.props.getData(this.props)
-    }
-
-    render() {
-        return (
-            <Grid container direction="row" justify="flex-start" alignItems="flex-start" spacing={1}>
-                {this.props.products.map(product => <Grid item>{ProductGridItem(product)}</Grid>)}
-            </Grid>
-        );
-    }
+export default function ProductGrid(props) {
+    return (
+        <Grid container direction="row" justify="flex-start" alignItems="flex-start" spacing={1}>
+            {props.products.map(product => <Grid item>{ProductGridItem(product)}</Grid>)}
+        </Grid>
+    );
 }
 
 function ProductGridItem(props) {
@@ -47,18 +39,3 @@ function ProductGridItem(props) {
         </Card>
     );
 }
-
-const mapStateToProps = (state, ownProps) => {
-    return {
-        products: state.products.search
-    }
-}
-
-const mapDispatchToProps = (dispatch, ownProps) => {
-    return {
-        getData: () => dispatch(findProducts(ownProps))
-    }
-}
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProductsGrid)

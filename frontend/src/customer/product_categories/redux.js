@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit";
 import api from "../../api";
 
 
@@ -44,5 +44,18 @@ function createTree(treeItems) {
 
     return treeItemById;
 }
+
+
+export const ancestorsOf = categoryId => (state => {
+    let result = [];
+    let currentCategory = state.byId[categoryId];
+
+    while (currentCategory != null) {
+        result.unshift(currentCategory);
+        currentCategory = state.byId[currentCategory.parentId];
+    }
+
+    return result;
+})
 
 
