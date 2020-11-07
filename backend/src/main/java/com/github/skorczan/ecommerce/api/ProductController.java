@@ -4,6 +4,7 @@ import com.github.skorczan.ecommerce.application.ProductDto;
 import com.github.skorczan.ecommerce.application.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.server.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -30,14 +31,14 @@ public class ProductController {
     private final CreateProductRequestValidator createProductRequestValidator;
 
     @GetMapping(path = "")
-    public List<ProductDto> listProducts(
+    public Page<ProductDto> listProducts(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             Pageable page) {
-        return productService.search(name, type, categoryId, minPrice, maxPrice, page).toList();
+        return productService.search(name, type, categoryId, minPrice, maxPrice, page);
     }
 
     @GetMapping(path = "/{id}")

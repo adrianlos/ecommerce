@@ -9,8 +9,11 @@ import ProductsPage from "./customer/products/ProductsPage";
 import ProductPage from "./customer/products/ProductPage";
 import Page from "./Page";
 import {Grid, Typography, Divider, Toolbar, Link, CssBaseline, Container} from "@material-ui/core";
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 import './App.css';
+import BasketPage from "./customer/basket/BasketPage";
+import IconButton from "@material-ui/core/IconButton";
 
 const sections = [
   { title: "Kategoria 1", url: "http://google.com" },
@@ -29,6 +32,7 @@ export default function App() {
           <main>
               <Grid item xs={12} md={8}>
                   <Typography variant="h6" gutterBottom>Ecommerce SDA Project</Typography>
+                  <RouterLink to={"/basket"}><IconButton><ShoppingCartIcon /></IconButton></RouterLink>
                   <Divider />
                   <Toolbar component="nav" variant="dense">
                       {sections.map((section) => (
@@ -50,6 +54,9 @@ export default function App() {
               </Route>
               <Route path="/products/:productId">
                 <Page><ProductPage /></Page>
+              </Route>
+              <Route exact path="/basket">
+                <Page><BasketPage /></Page>
               </Route>
             </Switch>
           </main>

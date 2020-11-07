@@ -7,6 +7,14 @@ export const getProduct = createAsyncThunk("GET_PRODUCT", async productId => {
     return response.data
 });
 
+export const prefetchProduct = createAsyncThunk("PREFETCH_PRODUCT", async (productId, thunkAPI) => {
+    if (thunkAPI.getState().products[productId]) {
+        return thunkAPI.getState().products[productId];
+    } else {
+        return thunkAPI.dispatch(getProduct(productId));
+    }
+});
+
 export const findProducts = createAsyncThunk("FIND_PRODUCTS", async (_, thunkAPI) => {
     let url = "http://localhost:8080/products?" + createProductsQueryParams(
         thunkAPI.getState().products.search.filters,
@@ -55,6 +63,8 @@ export const changePage = createAction("UPDATE_PAGE_SETTINGS")
 
 export const changeOrder = createAction("CHANGE_ORDER")
 
+export const changePriceRange = createAction("CHANGE_PRICE_RANGE")
+
 export const productSlice = createSlice({
     name: 'products',
     initialState: {
@@ -83,11 +93,16 @@ export const productSlice = createSlice({
             state.byId[action.payload.id] = action.payload
         },
         [findProducts.fulfilled]: (state, action) => {
-            for (const product of action.payload) {
+            for (const product of action.payload.content) {
                 state.byId[product.id] = product
             }
 
-            state.search.result = action.payload
+            state.search.result = action.payload.content
+            state.search.page = {
+                no: action.payload.number,
+                size: action.payload.size,
+                count: action.payload.totalPages
+            }
         },
         [updateFilterSettings]: (state, action) => {
             for (const filterName in action.payload) {
@@ -115,6 +130,10 @@ export const productSlice = createSlice({
             if (action.payload.order != null) {
                 state.search.sort_order.order = action.payload.order
             }
+        },
+        [changePriceRange]: (state, action) => {
+            state.search.filters.min_price = action.payload.minPrice;
+            state.search.filters.max_price = action.payload.maxPrice;
         }
     }
 })

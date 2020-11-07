@@ -1,16 +1,12 @@
-import React, {Component} from 'react';
-import TextField from "@material-ui/core/TextField";
+import React, {PureComponent} from 'react';
 import Input from "@material-ui/core/Input";
+import RemoveIcon from '@material-ui/icons/Remove';
+import Grid from "@material-ui/core/Grid";
 
-export default class PriceRangeFilter extends Component {
+export default class PriceRangeFilter extends PureComponent {
 
     constructor(props) {
         super(props);
-
-        this.state = {
-            minPrice: props.minPrice,
-            maxPrice: props.maxPrice
-        }
 
         this._handleMinPriceChange = this._handleMinPriceChange.bind(this);
         this._handleMaxPriceChange = this._handleMaxPriceChange.bind(this);
@@ -18,10 +14,26 @@ export default class PriceRangeFilter extends Component {
 
     render() {
         return (
-            <form>
-                <Input type="number" value={this.state.minPrice} label="From" onChange={this._handleMinPriceChange} />
-                <Input type="number" value={this.state.maxPrice} label="To" onChange={this._handleMaxPriceChange} />
-            </form>
+            <Grid container direction="row" justify="space-around" alignItems="center">
+                <Grid item xs={5}>
+                    <Input error={this.props.minPrice < 0}
+                           type="number"
+                           size="small"
+                           value={this.props.minPrice || 0}
+                           label="From"
+                           onChange={this._handleMinPriceChange}
+                           margin="dense" />
+                </Grid>
+                <Grid item xs={2}><RemoveIcon /></Grid>
+                <Grid item xs={5}>
+                    <Input error={this.props.minPrice > this.props.maxPrice}
+                           type="number"
+                           size="small"
+                           value={this.props.maxPrice}
+                           label="To"
+                           onChange={this._handleMaxPriceChange} />
+                </Grid>
+            </Grid>
         );
     }
 
@@ -30,19 +42,24 @@ export default class PriceRangeFilter extends Component {
             return;
         }
 
-        const value = event.target.value;
+        const value = parseInt(event.target.value);
 
-        this.setState((previousState) => ({
-            minPrice: value
-        }));
+        this.props.onChange({
+            minPrice: value > 0 ? value: 0,
+            maxPrice: this.props.maxPrice,
+        })
     }
 
     _handleMaxPriceChange(event) {
-        const value = event.target != null ? event.target.value : this.state.maxPrice;
+        if (event.target == null) {
+            return;
+        }
+
+        const value = parseInt(event.target.value);
 
         this.setState({
             maxPrice: value,
-            minPrice: this.state.minPrice
+            minPrice: this.props.minPrice
         });
     }
 }

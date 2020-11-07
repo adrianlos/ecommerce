@@ -6,9 +6,17 @@ import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 export default function Pagination(props) {
     return (
         <div>
-            <IconButton onClick={ props.goToPreviousPage }><ArrowLeftIcon /></IconButton>
-            <span>{props.no}/{props.count}</span>
-            <IconButton onClick={ props.goToNextPage }><ArrowRightIcon /></IconButton>
+            <IconButton disabled={props.no <= 0}
+                        onClick={ props.goToPreviousPage }
+                        style={{ paddingTop: "0px", paddingBottom: "0px" }}>
+                <ArrowLeftIcon />
+            </IconButton>
+            <span style={{fontSize: "16px"}}>{props.no + 1}/{props.count || "..."}</span>
+            <IconButton disabled={props.no + 1 >= props.count}
+                        onClick={ props.goToNextPage }
+                        style={{ paddingTop: "0px", paddingBottom: "0px" }}>
+                <ArrowRightIcon />
+            </IconButton>
         </div>
     );
 }
