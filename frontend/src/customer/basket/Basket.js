@@ -10,22 +10,25 @@ import Paper from "@material-ui/core/Paper";
 
 export default function Basket(props) {
     return (
-        <TableContainer component={Paper}>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Produkt</TableCell>
-                        <TableCell>Cena</TableCell>
-                        <TableCell>Ilość</TableCell>
-                        <TableCell>Koszt</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {Object.values(props.items || {}).length <= 0 ? <p>Najpierw dodaj coś do koszyka</p>: null}
-                    {Object.values(props.items || {}).map(item => <BasketItem id={item.id} name={item.title} price={item.price} count={item.count} />)}
-                </TableBody>
-            </Table>
-        </TableContainer>
+        <Paper>
+            <TableContainer>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Produkt</TableCell>
+                            <TableCell>Cena</TableCell>
+                            <TableCell>Ilość</TableCell>
+                            <TableCell>Koszt</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {Object.values(props.items || {}).length <= 0 ? <p>Najpierw dodaj coś do koszyka</p>: null}
+                        {Object.values(props.items || {}).map(item => <BasketItem id={item.id} name={item.title} price={item.price} count={item.count} />)}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            {props.children}
+        </Paper>
     );
 }
 

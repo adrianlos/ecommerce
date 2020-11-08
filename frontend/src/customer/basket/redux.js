@@ -25,7 +25,9 @@ export const basketSlice = createSlice({
             }
         },
         [dropBasket]: (state, action) => {
-            state = {}
+            for (const productId of Object.keys(state)) {
+                delete state[productId];
+            }
         }
     }
 });

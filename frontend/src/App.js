@@ -14,6 +14,8 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import './App.css';
 import BasketPage from "./customer/basket/BasketPage";
 import IconButton from "@material-ui/core/IconButton";
+import OrderDeliveryPage from "./customer/order/OrderDeliveryPage";
+import OrderCompletePage from "./customer/order/OrderCompletePage";
 
 const sections = [
   { title: "Kategoria 1", url: "http://google.com" },
@@ -58,6 +60,12 @@ export default function App() {
               <Route exact path="/basket">
                 <Page><BasketPage /></Page>
               </Route>
+              <Route exact path="/order/delivery">
+                 <Page><OrderDeliveryPage /></Page>
+              </Route>
+                <Route exact path="/order/complete">
+                    <Page><OrderCompletePage /></Page>
+                </Route>
             </Switch>
           </main>
             <footer>

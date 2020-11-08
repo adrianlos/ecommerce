@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { productSlice } from './customer/products/redux';
 import { productCategorySlice } from './customer/product_categories/redux';
 import { basketSlice } from './customer/basket/redux';
+import { orderSlice } from "./customer/order/redux";
 
 
 const store = configureStore({
@@ -9,7 +10,8 @@ const store = configureStore({
         // auth:
         products: productSlice.reducer,
         product_categories: productCategorySlice.reducer,
-        basket: basketSlice.reducer
+        basket: basketSlice.reducer,
+        order: orderSlice.reducer
     }
 });
 
